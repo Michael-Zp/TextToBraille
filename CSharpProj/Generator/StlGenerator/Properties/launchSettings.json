@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "StlGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "-o \"J:\\3DPrinter\\Braille\\Tests\" -i 1235"
+    }
+  }
+}
