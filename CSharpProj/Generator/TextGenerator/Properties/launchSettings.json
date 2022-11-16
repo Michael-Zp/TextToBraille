@@ -2,7 +2,7 @@
   "profiles": {
     "TextGenerator": {
       "commandName": "Project",
-      "commandLineArgs": " --OutputPath \"J:\\3DPrinter\\Braille\\TestText\" --NamePrefix \"LongWord_Binary\" --InputText \"ThisIsAVeryLongLongLongLongWordThatJustWontEndAtAll.\""
+      "commandLineArgs": " --OutputPath \"J:\\3DPrinter\\Braille\\TestText\" --NamePrefix \"PrintTest01_Binary\" --InputText \"abcd\""
     }
   }
 }

@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TestGenerator\StlGenerator.csproj" />
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
   </ItemGroup>
 
 </Project>
