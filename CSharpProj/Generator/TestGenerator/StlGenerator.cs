@@ -1,45 +1,12 @@
 ﻿using CommandLine;
+using Shared;
 using System.Numerics;
 
 namespace StlGenerator
 {
     public static class StlGenerator
     {
-        public class CLOptions
-        {
-            [Option('o', "OutputPath", Default = ".")]
-            public string OutputPath { get; set; } = ".";
-
-            [Option('i', "BraillePoints", Required = true)]
-            public string BraillePoints { get; set; } = "123456";
-        }
-
-        public enum OutputFormat
-        {
-            Text,
-            Binary
-        }
-
-        public class TypesettingOptions
-        {
-            public float LetterWidth;
-            public float LetterHeight;
-            public float SpaceBetweenLetters;
-            public float SpaceBetweenLines;
-
-            private TypesettingOptions()
-            { }
-
-            public TypesettingOptions(float letterWidth, float letterHeight, float spaceBetweenLetters, float spaceBetweenLines)
-            {
-                LetterWidth = letterWidth;
-                LetterHeight = letterHeight;
-                SpaceBetweenLetters = spaceBetweenLetters;
-                SpaceBetweenLines = spaceBetweenLines;
-            }
-        }
-
-        public static void GenerateStl(string modelName, string outputPath, List<List<string>> braillePoints, TypesettingOptions typesettingOptions, OutputFormat outputFormat)
+        public static void GenerateStl(string modelName, string outputPath, List<List<string>> braillePoints, TypesettingOptions typesettingOptions, OutputFormat outputFormat, PrintOptions printOptions)
         {
             IStlExporter exporter = outputFormat == OutputFormat.Text ? new TextBasedStlExporter() : new BinaryStlExporter();
             ModelBuilder builder = new ModelBuilder(modelName, exporter);
@@ -53,12 +20,16 @@ namespace StlGenerator
                 0.5f);
 
             var knobRadius = 0.75f;
-            var knobHeight = 0.65f;
+            var knobHeight = 0.5f;
 
             // For now just have the plate at 0.0, should be fine
             var plateCenter = Vector3.Zero;
 
-            builder.AddAABox(plateSize, plateCenter);
+            if (printOptions.PrintWithBasePlate)
+            {
+                builder.AddAABox(plateSize, plateCenter);
+                knobHeight *= 2;
+            }
 
             // Take whole width of letter, reduce it by two knobs (4 * knobRadius), divide by 3, because we have 3 spaces inbetween, divide by 2, because only one half of the middle space matters, add knob radius again to find middle.
             var rightColumnOffset = ((typesettingOptions.LetterWidth - (4 * knobRadius)) / 3.0f / 2.0f) + knobRadius;
@@ -146,7 +117,8 @@ namespace StlGenerator
                 outputPath,
                 new List<List<string>>() { new List<string>() { clOptions.BraillePoints } },
                 new TypesettingOptions(6, 9, 2, 4),
-                OutputFormat.Text);
+                OutputFormat.Text,
+                new PrintOptions(true));
 
             return 0;
         }
