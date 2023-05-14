@@ -1,26 +1,11 @@
 ﻿using CommandLine;
 using TextGenerator.Alphabet;
+using Shared;
 
 namespace TextGenerator
 {
     internal class TextGenerator
     {
-        public class CLOptions
-        {
-            [Option('o', "OutputPath", Default = ".")]
-            public string OutputDirectory { get; set; } = ".";
-
-            [Option('n', "NamePrefix", Default = ".")]
-            public string NamePrefix { get; set; } = string.Empty;
-
-            [Option('i', "InputText", Required = true)]
-            public string InputText { get; set; } = "LoremIpsum";
-
-            [Option('t', "TextOutput")]
-            public bool TextOutput { get; set; } = false;
-        }
-
-
         static int Main(string[] args)
         {
             var clOptions = Parser.Default.ParseArguments<CLOptions>(args).Value;
@@ -31,65 +16,14 @@ namespace TextGenerator
             }
 
             // Should be the right settings for my printer
-            var typesettingOptions = new StlGenerator.StlGenerator.TypesettingOptions(6, 9, 2, 4);
-            var maxLineLength = (int)Math.Floor((200 - typesettingOptions.SpaceBetweenLetters) / (typesettingOptions.LetterWidth + typesettingOptions.SpaceBetweenLetters)) - 1;
-            var maxRowsPerPage = (int)Math.Floor((210 - typesettingOptions.SpaceBetweenLines) / (typesettingOptions.LetterHeight + typesettingOptions.SpaceBetweenLines)) - 1;
-            var textWithLineBreaks = new List<List<string>>();
-
-            var currentLine = new List<string>();
-            foreach (var word in clOptions.InputText.Split(" "))
-            {
-                var braillePointsForWord = WordToBraillePoints(word);
-
-                if (braillePointsForWord.Count + currentLine.Count <= maxLineLength)
-                {
-                    // Found a word, that fits in the current line
-                    currentLine.AddRange(braillePointsForWord);
-
-                    // Only add a whitespace if there is space left
-                    // No need to break to the next line. The next word will do that anyway
-                    if (currentLine.Count + 1 < maxLineLength)
-                    {
-                        currentLine.Add("");
-                    }
-                }
-                else
-                {
-                    // If the word was super long, the current line will be empty, and thus we should not print it
-                    if (currentLine.Count > 0)
-                    {
-                        textWithLineBreaks.Add(currentLine);
-                        currentLine = new List<string>();
-                    }
-                    
-                    while (braillePointsForWord.Count > maxLineLength)
-                    {
-                        currentLine.AddRange(braillePointsForWord.Take(maxLineLength - 1).ToList());
-                        currentLine.AddRange(WordToBraillePoints("-"));
-                        braillePointsForWord.RemoveRange(0, maxLineLength - 1);
-                        textWithLineBreaks.Add(currentLine);
-                        currentLine = new List<string>();
-                    }
-
-                    currentLine.AddRange(braillePointsForWord);
-
-                    if (currentLine.Count + 1 < maxLineLength)
-                    {
-                        currentLine.Add("");
-                    }
-                }
-            }
-
-            if (currentLine.Count > 0)
-            {
-                // Add the last filled line, that never reached the line break.
-                textWithLineBreaks.Add(currentLine);
-            }
+            var typesettingOptions = new TypesettingOptions(5.5f, 9.5f, 3, 5);
+            var printPlateProps = PrintPlateProperties.Ender3V2(typesettingOptions);
+            List<List<string>> textWithLineBreaks = SplitTextIntoLines(clOptions.InputText, printPlateProps);
 
             for (int pageNumber = 1; textWithLineBreaks.Count > 0; ++pageNumber)
             {
                 // Print each page seperately
-                var page = textWithLineBreaks.Take(maxRowsPerPage).ToList();
+                var page = textWithLineBreaks.Take(printPlateProps.MaxRowsPerPage).ToList();
                 textWithLineBreaks.RemoveRange(0, page.Count);
 
                 var filename = $"Page{pageNumber}.stl";
@@ -104,10 +38,68 @@ namespace TextGenerator
                     Path.Join(clOptions.OutputDirectory, filename),
                     page,
                     typesettingOptions,
-                    clOptions.TextOutput ? StlGenerator.StlGenerator.OutputFormat.Text : StlGenerator.StlGenerator.OutputFormat.Binary);
+                    clOptions.TextOutput ? OutputFormat.Text : OutputFormat.Binary,
+                    new PrintOptions(clOptions.PrintWithBuildplate));
             }
 
             return 0;
+        }
+
+        private static List<List<string>> SplitTextIntoLines(string inputText, PrintPlateProperties printPlateProps)
+        {
+            var textWithLineBreaks = new List<List<string>>();
+
+            var currentLine = new List<string>();
+            foreach (var word in inputText.Split(" "))
+            {
+                var braillePointsForWord = WordToBraillePoints(word);
+
+                if (braillePointsForWord.Count + currentLine.Count <= printPlateProps.MaxLineLength)
+                {
+                    // Found a word, that fits in the current line
+                    currentLine.AddRange(braillePointsForWord);
+
+                    // Only add a whitespace if there is space left
+                    // No need to break to the next line. The next word will do that anyway
+                    if (currentLine.Count + 1 < printPlateProps.MaxLineLength)
+                    {
+                        currentLine.Add("");
+                    }
+                }
+                else
+                {
+                    // If the word was super long, the current line will be empty, and thus we should not print it
+                    if (currentLine.Count > 0)
+                    {
+                        textWithLineBreaks.Add(currentLine);
+                        currentLine = new List<string>();
+                    }
+
+                    while (braillePointsForWord.Count > printPlateProps.MaxLineLength)
+                    {
+                        currentLine.AddRange(braillePointsForWord.Take(printPlateProps.MaxLineLength - 1).ToList());
+                        currentLine.AddRange(WordToBraillePoints("-"));
+                        braillePointsForWord.RemoveRange(0, printPlateProps.MaxLineLength - 1);
+                        textWithLineBreaks.Add(currentLine);
+                        currentLine = new List<string>();
+                    }
+
+                    currentLine.AddRange(braillePointsForWord);
+
+                    if (currentLine.Count + 1 < printPlateProps.MaxLineLength)
+                    {
+                        currentLine.Add("");
+                    }
+                }
+            }
+
+            if (currentLine.Count > 0)
+            {
+                // Add the last filled line, that never reached the line break.
+                textWithLineBreaks.Add(currentLine);
+            }
+
+            return textWithLineBreaks;
         }
 
         private static List<string> WordToBraillePoints(string inputWord)
