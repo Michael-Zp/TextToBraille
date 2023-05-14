@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using TextGenerator.Alphabet;
 
 namespace TextGenerator
 {
@@ -111,89 +112,81 @@ namespace TextGenerator
 
         private static List<string> WordToBraillePoints(string inputWord)
         {
-            // Braille is numbered like this:
-            // 1 4
-            // 2 5
-            // 3 6
-            // So we can determine the position of the knobs by listing all the used positions (Yes this could be done with a bit mask, but is easier this way)
-            const string NumberIndicator = "3456";
-            var brailleAlphabet = new Dictionary<string, string>()
-            {
-                // Group 1
-                { "A".ToLower(), "1" },
-                { "B".ToLower(), "12" },
-                { "C".ToLower(), "14" },
-                { "D".ToLower(), "145" },
-                { "E".ToLower(), "15" },
-                { "F".ToLower(), "124" },
-                { "G".ToLower(), "1245" },
-                { "H".ToLower(), "125" },
-                { "I".ToLower(), "24" },
-                { "J".ToLower(), "245" },
+            Alphabet<SixPointLetter> alphabet = new Alphabet<SixPointLetter>("3456");
 
-                // Group 2 (Group 1 with prefix of '3')
-                { "K".ToLower(), "31" },
-                { "L".ToLower(), "312" },
-                { "M".ToLower(), "314" },
-                { "N".ToLower(), "3145" },
-                { "O".ToLower(), "315" },
-                { "P".ToLower(), "3124" },
-                { "Q".ToLower(), "31245" },
-                { "R".ToLower(), "3125" },
-                { "S".ToLower(), "324" },
-                { "T".ToLower(), "3245" },
+            // Group 1
+            alphabet.AddLetter("A".ToLower(), 1);
+            alphabet.AddLetter("B".ToLower(), 12);
+            alphabet.AddLetter("C".ToLower(), 14);
+            alphabet.AddLetter("D".ToLower(), 145);
+            alphabet.AddLetter("E".ToLower(), 15);
+            alphabet.AddLetter("F".ToLower(), 124);
+            alphabet.AddLetter("G".ToLower(), 1245);
+            alphabet.AddLetter("H".ToLower(), 125);
+            alphabet.AddLetter("I".ToLower(), 24);
+            alphabet.AddLetter("J".ToLower(), 245);
 
-                // Group 3 (Group 1 with prefix of '36')
-                { "U".ToLower(), "361" },
-                { "V".ToLower(), "3612" },
-                { "X".ToLower(), "3614" },
-                { "Y".ToLower(), "36145" },
-                { "ß".ToLower(), "3615" },
-                { "ST".ToLower(), "36124" },
+            // Group 2 (Group 1 with prefix of '3')
+            alphabet.AddLetter("K".ToLower(), 31);
+            alphabet.AddLetter("L".ToLower(), 312);
+            alphabet.AddLetter("M".ToLower(), 314);
+            alphabet.AddLetter("N".ToLower(), 3145);
+            alphabet.AddLetter("O".ToLower(), 315);
+            alphabet.AddLetter("P".ToLower(), 3124);
+            alphabet.AddLetter("Q".ToLower(), 31245);
+            alphabet.AddLetter("R".ToLower(), 3125);
+            alphabet.AddLetter("S".ToLower(), 324);
+            alphabet.AddLetter("T".ToLower(), 3245);
 
-                // Group 4 (Group 1 with prefix of '6')
-                { "AU".ToLower(), "61" },
-                { "EU".ToLower(), "612" },
-                { "EI".ToLower(), "614" },
-                { "CH".ToLower(), "6145" },
-                { "SCH".ToLower(), "615" },
-                { "Ü".ToLower(), "6124" },
-                { "Ö".ToLower(), "61245" },
-                { "W".ToLower(), "6125" },
+            // Group 3 (Group 1 with prefix of '36')
+            alphabet.AddLetter("U".ToLower(), 361);
+            alphabet.AddLetter("V".ToLower(), 3612);
+            alphabet.AddLetter("X".ToLower(), 3614);
+            alphabet.AddLetter("Y".ToLower(), 36145);
+            alphabet.AddLetter("ß".ToLower(), 3615);
+            alphabet.AddLetter("ST".ToLower(), 36124);
 
-                // Combinations that fall out of line
-                { "ÄU".ToLower(), "34" },
-                { "Ä".ToLower(), "345" },
-                { "IE".ToLower(), "346" },
-                { ".".ToLower(), "3" },
-                { "-".ToLower(), "36" },
-                { ",".ToLower(), "2" },
-                { ";".ToLower(), "23" },
-                { ":".ToLower(), "25" },
-                { "?".ToLower(), "26" },
-                { "!".ToLower(), "235" },
+            // Group 4 (Group 1 with prefix of '6')
+            alphabet.AddLetter("AU".ToLower(), 61);
+            alphabet.AddLetter("EU".ToLower(), 612);
+            alphabet.AddLetter("EI".ToLower(), 614);
+            alphabet.AddLetter("CH".ToLower(), 6145);
+            alphabet.AddLetter("SCH".ToLower(), 615);
+            alphabet.AddLetter("Ü".ToLower(), 6124);
+            alphabet.AddLetter("Ö".ToLower(), 61245);
+            alphabet.AddLetter("W".ToLower(), 6125);
+
+            // Combinations that fall out of line
+            alphabet.AddLetter("ÄU".ToLower(), 34);
+            alphabet.AddLetter("Ä".ToLower(), 345);
+            alphabet.AddLetter("IE".ToLower(), 346);
+            alphabet.AddLetter(".".ToLower(), 3);
+            alphabet.AddLetter("-".ToLower(), 36);
+            alphabet.AddLetter(",".ToLower(), 2);
+            alphabet.AddLetter(";".ToLower(), 23);
+            alphabet.AddLetter(":".ToLower(), 25);
+            alphabet.AddLetter("?".ToLower(), 26);
+            alphabet.AddLetter("!".ToLower(), 235);
             
-                // Numbers (are indicated by the NumberIndicator)
-                { "1".ToLower(), "1" },
-                { "2".ToLower(), "12" },
-                { "3".ToLower(), "14" },
-                { "4".ToLower(), "145" },
-                { "5".ToLower(), "15" },
-                { "6".ToLower(), "124" },
-                { "7".ToLower(), "1245" },
-                { "8".ToLower(), "125" },
-                { "9".ToLower(), "24" },
-                { "0".ToLower(), "245" },
-            };
+            // Numbers (are indicated by the NumberIndicator)
+            alphabet.AddLetter("1".ToLower(), 1);
+            alphabet.AddLetter("2".ToLower(), 12);
+            alphabet.AddLetter("3".ToLower(), 14);
+            alphabet.AddLetter("4".ToLower(), 145);
+            alphabet.AddLetter("5".ToLower(), 15);
+            alphabet.AddLetter("6".ToLower(), 124);
+            alphabet.AddLetter("7".ToLower(), 1245);
+            alphabet.AddLetter("8".ToLower(), 125);
+            alphabet.AddLetter("9".ToLower(), 24);
+            alphabet.AddLetter("0".ToLower(), 245);
 
 
             List<string> output = new List<string>();
 
-            var maxKeyLength = 3; // The maximum length of a key in the alphabet
             for (int i = 0; i < inputWord.Length; ++i)
             {
                 // Start looking for the largest chunks first and then trickle down to lower lengths
-                for (int k = maxKeyLength; k > 0; --k)
+                for (int k = alphabet.MaxSymbolLength; k > 0; --k)
                 {
                     if (inputWord.Length - i >= k)
                     {
