@@ -1,12 +1,13 @@
 ﻿using CommandLine;
 using Shared;
 using System.Numerics;
+using TextGenerator.Alphabet;
 
 namespace StlGenerator
 {
     public static class StlGenerator
     {
-        public static void GenerateStl(string modelName, string outputPath, List<List<string>> braillePoints, TypesettingOptions typesettingOptions, OutputFormat outputFormat, PrintOptions printOptions)
+        public static void GenerateStl(string modelName, string outputPath, List<List<ILetter>> braillePoints, TypesettingOptions typesettingOptions, OutputFormat outputFormat, PrintOptions printOptions)
         {
             IStlExporter exporter = outputFormat == OutputFormat.Text ? new TextBasedStlExporter() : new BinaryStlExporter();
             ModelBuilder builder = new ModelBuilder(modelName, exporter);
@@ -56,28 +57,31 @@ namespace StlGenerator
                         (typesettingOptions.LetterHeight + typesettingOptions.SpaceBetweenLines) * row * -1, // Go down with rows
                         0.0f);
 
-                    foreach (var point in braillePoints[row][column].ToCharArray())
+                    // Braille is numbered like this:
+                    // 1 4
+                    // 2 5
+                    // 3 6
+                    for (int pointNumber = 0; pointNumber < 6; pointNumber++)
                     {
-                        // Braille is numbered like this:
-                        // 1 4
-                        // 2 5
-                        // 3 6
-                        // So we can determine the position by looking at each number in the string
-                        var pointNumber = point - '0';
-                        var columnOffset = pointNumber <= 3 ? leftColumn : rightColumnOffset;
+                        if (!braillePoints[row][column].IsPointPresent(pointNumber))
+                        {
+                            continue;
+                        }
+
+                        var columnOffset = pointNumber <= 2 ? leftColumn : rightColumnOffset;
 
                         float rowOffset;
                         switch (pointNumber % 3)
                         {
-                            case 1:
+                            case 0:
                                 rowOffset = topRowOffset;
                                 break;
 
-                            case 2:
+                            case 1:
                                 rowOffset = middleRowOffset;
                                 break;
 
-                            case 0:
+                            case 2:
                                 rowOffset = bottomRowOffset;
                                 break;
 
@@ -115,7 +119,7 @@ namespace StlGenerator
             GenerateStl(
                 modelName,
                 outputPath,
-                new List<List<string>>() { new List<string>() { clOptions.BraillePoints } },
+                new List<List<ILetter>>() { new List<ILetter>() { new SixPointLetter(clOptions.BraillePoints, false) } },
                 new TypesettingOptions(6, 9, 2, 4),
                 OutputFormat.Text,
                 new PrintOptions(true));
