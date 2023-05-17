@@ -18,5 +18,8 @@ namespace TextGenerator
 
         [Option('b', "PrintBuildplate")]
         public bool PrintWithBuildplate { get; set; } = false;
+
+        [Option('l', "Language")]
+        public string Language { get; set; } = "german";
     }
 }
