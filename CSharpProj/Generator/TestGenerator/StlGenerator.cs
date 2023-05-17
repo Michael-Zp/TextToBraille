@@ -7,7 +7,7 @@ namespace StlGenerator
 {
     public static class StlGenerator
     {
-        public static void GenerateStl(string modelName, string outputPath, List<List<ILetter>> braillePoints, TypesettingOptions typesettingOptions, OutputFormat outputFormat, PrintOptions printOptions)
+        public static void GenerateStl(string modelName, string outputPath, List<List<Letter>> braillePoints, TypesettingOptions typesettingOptions, OutputFormat outputFormat, PrintOptions printOptions)
         {
             IStlExporter exporter = outputFormat == OutputFormat.Text ? new TextBasedStlExporter() : new BinaryStlExporter();
             ModelBuilder builder = new ModelBuilder(modelName, exporter);
@@ -119,7 +119,7 @@ namespace StlGenerator
             GenerateStl(
                 modelName,
                 outputPath,
-                new List<List<ILetter>>() { new List<ILetter>() { new SixPointLetter(clOptions.BraillePoints, false) } },
+                new List<List<Letter>>() { new List<Letter>() { new SixPointLetter(clOptions.BraillePoints, false) } },
                 new TypesettingOptions(6, 9, 2, 4),
                 OutputFormat.Text,
                 new PrintOptions(true));

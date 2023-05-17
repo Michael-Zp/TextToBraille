@@ -1,0 +1,275 @@
+{
+  "Letters": [
+    {
+      "IsNumber": false,
+      "Symbol": "a",
+      "Bitmask": 1
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "b",
+      "Bitmask": 3
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "c",
+      "Bitmask": 9
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "d",
+      "Bitmask": 25
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "e",
+      "Bitmask": 17
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "f",
+      "Bitmask": 11
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "g",
+      "Bitmask": 27
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "h",
+      "Bitmask": 19
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "i",
+      "Bitmask": 10
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "j",
+      "Bitmask": 26
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "k",
+      "Bitmask": 5
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "l",
+      "Bitmask": 7
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "m",
+      "Bitmask": 13
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "n",
+      "Bitmask": 29
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "o",
+      "Bitmask": 21
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "p",
+      "Bitmask": 15
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "q",
+      "Bitmask": 31
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "r",
+      "Bitmask": 23
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "s",
+      "Bitmask": 14
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "t",
+      "Bitmask": 30
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "u",
+      "Bitmask": 37
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "v",
+      "Bitmask": 39
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "x",
+      "Bitmask": 45
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "y",
+      "Bitmask": 61
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "ß",
+      "Bitmask": 53
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "st",
+      "Bitmask": 47
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "au",
+      "Bitmask": 33
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "eu",
+      "Bitmask": 35
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "ei",
+      "Bitmask": 41
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "ch",
+      "Bitmask": 57
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "sch",
+      "Bitmask": 49
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "ü",
+      "Bitmask": 43
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "ö",
+      "Bitmask": 59
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "w",
+      "Bitmask": 51
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "äu",
+      "Bitmask": 12
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "ä",
+      "Bitmask": 28
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "ie",
+      "Bitmask": 44
+    },
+    {
+      "IsNumber": false,
+      "Symbol": ".",
+      "Bitmask": 4
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "-",
+      "Bitmask": 36
+    },
+    {
+      "IsNumber": false,
+      "Symbol": ",",
+      "Bitmask": 2
+    },
+    {
+      "IsNumber": false,
+      "Symbol": ";",
+      "Bitmask": 6
+    },
+    {
+      "IsNumber": false,
+      "Symbol": ":",
+      "Bitmask": 18
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "?",
+      "Bitmask": 34
+    },
+    {
+      "IsNumber": false,
+      "Symbol": "!",
+      "Bitmask": 22
+    },
+    {
+      "IsNumber": true,
+      "Symbol": "1",
+      "Bitmask": 1
+    },
+    {
+      "IsNumber": true,
+      "Symbol": "2",
+      "Bitmask": 3
+    },
+    {
+      "IsNumber": true,
+      "Symbol": "3",
+      "Bitmask": 9
+    },
+    {
+      "IsNumber": true,
+      "Symbol": "4",
+      "Bitmask": 25
+    },
+    {
+      "IsNumber": true,
+      "Symbol": "5",
+      "Bitmask": 17
+    },
+    {
+      "IsNumber": true,
+      "Symbol": "6",
+      "Bitmask": 11
+    },
+    {
+      "IsNumber": true,
+      "Symbol": "7",
+      "Bitmask": 27
+    },
+    {
+      "IsNumber": true,
+      "Symbol": "8",
+      "Bitmask": 19
+    },
+    {
+      "IsNumber": true,
+      "Symbol": "9",
+      "Bitmask": 10
+    },
+    {
+      "IsNumber": true,
+      "Symbol": "0",
+      "Bitmask": 26
+    }
+  ],
+  "NumberIndicator": "3456"
+}

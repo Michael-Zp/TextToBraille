@@ -1,10 +1,30 @@
-﻿namespace TextGenerator.Alphabet
-{
-    public class SixPointLetter : ILetter
-    {
-        private UInt16 Bitmask = 0x0000;
+﻿using Newtonsoft.Json;
 
-        public string Symbol { get; private set; } = "";
+namespace TextGenerator.Alphabet
+{
+    public class SixPointLetter : Letter
+    {
+        public override bool IsNumber { get; set; }
+        public override string Symbol { get; set; }
+
+        [JsonIgnore]
+        public override string EncodingAsString
+        {
+            get
+            {
+                string str = "";
+
+                for (var i = 0; i < 6; i++)
+                {
+                    if (IsPointPresent(i))
+                    {
+                        str += $"{i + 1}";
+                    }
+                }
+
+                return str;
+            }
+        }
 
         public SixPointLetter()
         {
@@ -39,9 +59,7 @@
             Initialize(bitmask, isNumber);
         }
 
-        public bool IsNumber { get; private set; }
-
-        public void Initialize(string encoding, bool isNumber, string symbol = "")
+        public override void Initialize(string encoding, bool isNumber, string symbol = "")
         {
             if (string.IsNullOrEmpty(encoding))
             {
@@ -61,34 +79,16 @@
             Initialize(bitmask, isNumber, symbol);
         }
 
-        public void Initialize(UInt16 bitmask, bool isNumber, string symbol = "")
+        public override void Initialize(UInt16 bitmask, bool isNumber, string symbol = "")
         {
             Bitmask = bitmask;
             IsNumber = isNumber;
             Symbol = symbol;
         }
 
-        public bool IsPointPresent(int knobNumber)
+        public override bool IsPointPresent(int knobNumber)
         {
             return (Bitmask & (1 << knobNumber)) != 0;
-        }
-
-        public string KnobAsString
-        {
-            get
-            {
-                string str = "";
-
-                for (var i = 0; i < 6; i++)
-                {
-                    if (IsPointPresent(i))
-                    {
-                        str += $"{i + 1}";
-                    }
-                }
-
-                return str;
-            }
         }
     }
 }
