@@ -1,7 +1,6 @@
 ﻿using CommandLine;
 using TextGenerator.Alphabet;
 using Shared;
-using Newtonsoft.Json;
 
 namespace TextGenerator
 {
@@ -31,7 +30,7 @@ namespace TextGenerator
                 throw new Exception("Could not read alphabet");
             }
 
-            List<List<Letter>> textWithLineBreaks = SplitTextIntoLines(clOptions.InputText, printPlateProps, alphabet);
+            List<List<Letter>> textWithLineBreaks = SplitTextIntoLines(clOptions.InputText.ToLower(), printPlateProps, alphabet);
 
             for (int pageNumber = 1; textWithLineBreaks.Count > 0; ++pageNumber)
             {
@@ -58,14 +57,25 @@ namespace TextGenerator
             return 0;
         }
 
-        private static List<List<Letter>> SplitTextIntoLines(string inputText, PrintPlateProperties printPlateProps, Alphabet<SixPointLetter> alphabet)
+        private static List<List<Letter>> SplitTextIntoLines(ReadOnlySpan<char> inputText, PrintPlateProperties printPlateProps, Alphabet<SixPointLetter> alphabet)
         {
             var textWithLineBreaks = new List<List<Letter>>();
 
             var currentLine = new List<Letter>();
-            foreach (var word in inputText.Split(" "))
+            for (int start = 0; start < inputText.Length;)
             {
-                var braillePointsForWord = WordToBraillePoints(word, alphabet);
+                ReadOnlySpan<char> currentSlice = inputText.Slice(start, inputText.Length - start);
+                int end = currentSlice.IndexOf(" ");
+
+                if (end == -1)
+                {
+                    end = currentSlice.Length;
+                }
+
+                ReadOnlySpan<char> currentWord = inputText.Slice(start, end);
+                start += end + 1;
+
+                var braillePointsForWord = WordToBraillePoints(currentWord, alphabet);
 
                 if (braillePointsForWord.Count + currentLine.Count <= printPlateProps.MaxLineLength)
                 {
@@ -114,7 +124,7 @@ namespace TextGenerator
             return textWithLineBreaks;
         }
 
-        private static List<Letter> WordToBraillePoints(string inputWord, Alphabet<SixPointLetter> alphabet)
+        private static List<Letter> WordToBraillePoints(ReadOnlySpan<char> inputWord, Alphabet<SixPointLetter> alphabet)
         {
             List<Letter> output = new List<Letter>();
 
@@ -125,7 +135,7 @@ namespace TextGenerator
                 {
                     if (inputWord.Length - i >= k)
                     {
-                        var symbol = inputWord.Substring(i, k).ToLower();
+                        var symbol = inputWord.Slice(i, k);
 
                         if (alphabet.TryGetSymbol(symbol, out SixPointLetter letter))
                         {
