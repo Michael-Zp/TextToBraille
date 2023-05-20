@@ -6,7 +6,7 @@ namespace TextGenerator.Alphabet
     public class Alphabet<TLetter>
         where TLetter : Letter, new()
     {
-        public Dictionary<string, TLetter> Letters { get; private set; } = new Dictionary<string, TLetter>();
+        public Dictionary<UInt64, TLetter> Letters { get; private set; } = new Dictionary<UInt64, TLetter>();
 
         public TLetter NumberIndicator { get; private set; } = new TLetter();
 
@@ -72,16 +72,22 @@ namespace TextGenerator.Alphabet
 
         public void AddLetter(string letter, TLetter brailleChar)
         {
-            Letters.Add(letter, brailleChar);
+            if (letter.Length > 4)
+            {
+                throw new ArgumentException("Symbol can't be longer than 4 characters.");
+            }
+
+            Letters.Add(LetterToIndex(letter), brailleChar);
             MaxSymbolLength = Math.Max(MaxSymbolLength, letter.Length);
         }
 
-        public bool TryGetSymbol(string symbol, out TLetter brailleLetter)
+        public bool TryGetSymbol(ReadOnlySpan<char> symbol, out TLetter brailleLetter)
         {
             brailleLetter = default;
-            if (Letters.ContainsKey(symbol))
+            UInt64 index = LetterToIndex(symbol);
+            if (Letters.ContainsKey(index))
             {
-                brailleLetter = Letters[symbol];
+                brailleLetter = Letters[index];
                 return true;
             }
 
@@ -91,6 +97,16 @@ namespace TextGenerator.Alphabet
         private bool IsNumber(string letter)
         {
             return letter.Length == 1 && char.IsNumber(letter[0]);
+        }
+        
+        private UInt64 LetterToIndex(ReadOnlySpan<char> letter)
+        {
+            UInt64 index = 0;
+            for (int i = 0; i < letter.Length; ++i)
+            {
+                index = index + ((ulong)letter[i] << (sizeof(char) * i));
+            }
+            return index;
         }
     }
 }
